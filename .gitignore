@@ -1,0 +1,13 @@
+# dependencies
+node_modules/
+.next/
+
+# environment
+.env
+.env.local
+
+# SQLite database (production data)
+data/
+
+# misc
+*.tsbuildinfo
