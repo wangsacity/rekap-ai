@@ -2,11 +2,11 @@ import { Pool, PoolConfig } from 'pg';
 
 // Konfigurasi koneksi PostgreSQL
 const DB_CONFIG: PoolConfig = {
-  host: process.env.PGHOST || 'localhost',
-  port: Number(process.env.PGPORT) || 5432,
-  user: process.env.PGUSER || 'postgres',
-  password: process.env.PGPASSWORD || '',
-  database: process.env.PGDATABASE || 'rekap_sales',
+  host: process.env.NEXT_PUBLIC_PGHOST || 'localhost',
+  port: Number(process.env.NEXT_PUBLIC_PGPORT) || 5432,
+  user: process.env.NEXT_PUBLIC_PGUSER || 'postgres',
+  password: process.env.NEXT_PUBLIC_PGPASSWORD || '',
+  database: process.env.NEXT_PUBLIC_PGDATABASE || 'rekap_ai',
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
@@ -45,7 +45,7 @@ async function ensureInit(): Promise<void> {
   `);
 
   // Seed default admin jika belum ada
-  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123';
   const res = await pool.query(
     'SELECT id FROM users WHERE id = $1',
     ['admin-001']

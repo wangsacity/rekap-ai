@@ -5,11 +5,11 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 // Bypass firewall kantor:
 // Opsi 1 (recommended): GROQ_BASE_URL = URL Cloudflare Worker proxy
 // Opsi 2: PROXY_URL = HTTP/SOCKS proxy tradisional
-const proxyUrl = process.env.PROXY_URL;
-const baseURL = process.env.GROQ_BASE_URL; // contoh: https://groq-proxy.USERNAME.workers.dev/openai/v1
+const proxyUrl = process.env.NEXT_PUBLIC_PROXY_URL;
+const baseURL = process.env.NEXT_PUBLIC_GROQ_BASE_URL; // contoh: https://groq-proxy.USERNAME.workers.dev/openai/v1
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY,
   ...(baseURL ? { baseURL } : {}),
   ...(proxyUrl && !baseURL ? { httpAgent: new HttpsProxyAgent(proxyUrl) } : {}),
 });
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     if (!chatText?.trim()) {
       return NextResponse.json({ success: false, error: 'Teks chat tidak boleh kosong.' }, { status: 400 });
     }
-    if (!process.env.GROQ_API_KEY) {
+    if (!process.env.NEXT_PUBLIC_GROQ_API_KEY) {
       return NextResponse.json({ success: false, error: 'GROQ_API_KEY belum dikonfigurasi di .env.local' }, { status: 500 });
     }
 

@@ -5,6 +5,7 @@ node_modules/
 # environment
 .env
 .env.local
+.env.production
 
 # SQLite database (production data)
 data/

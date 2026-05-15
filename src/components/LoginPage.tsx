@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { loginApi, setSession } from '@/lib/auth';
 import { UserAccount } from '@/lib/types';
 
@@ -11,7 +11,12 @@ export default function LoginPage({ onLogin }: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [coba, setCoba] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setCoba(process.env.NEXT_PUBLIC_COBA ?? "gagal")
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +57,7 @@ export default function LoginPage({ onLogin }: Props) {
           </svg>
         </div>
         <h1 className="login-title">RekapAI</h1>
+        {coba}
         <p className="login-sub">Sales Intelligence — Wangsa City</p>
 
         <form onSubmit={handleSubmit} className="login-form">

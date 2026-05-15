@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const SHEETS_URL = process.env.GOOGLE_SHEETS_URL;
+const SHEETS_URL = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_URL;
 
 // POST: Kirim satu rekap ke Google Sheets
 // Urutan kolom: tanggalRekap, namaSales, namaCust, noHP, alamat,

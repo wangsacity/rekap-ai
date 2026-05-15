@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, user: users[0] });
   } catch (err: unknown) {
+    console.error('[auth/login] error:', err)
     const msg = err instanceof Error ? err.message : 'Unknown error';
     console.error('[auth/login] error:', msg);
     return NextResponse.json({ success: false, error: msg }, { status: 500 });
