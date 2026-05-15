@@ -5,8 +5,8 @@ import { getDb } from '@/lib/db';
 export async function GET() {
   try {
     const db = await getDb();
-    const [rows] = await db.execute(
-      'SELECT * FROM prospects ORDER BY skorPrioritas DESC, id DESC'
+    const { rows } = await db.query(
+      'SELECT * FROM prospects ORDER BY "skorPrioritas" DESC, id DESC'
     );
 
     return NextResponse.json({ success: true, data: rows });
@@ -17,18 +17,19 @@ export async function GET() {
   }
 }
 
-// POST: Simpan satu rekap prospek ke MySQL
+// POST: Simpan satu rekap prospek ke MySQL/PostgreSQL
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
     const db = await getDb();
-    const [result] = await db.execute(
+    const { rows } = await db.query(
       `INSERT INTO prospects (
-        tanggalRekap, namaSales, namaCust, noHP, alamat,
-        penghasilanEstimasi, produkDiminati, urgensi, status,
-        skorPrioritas, catatanAI, namaFile, masalahCustomer, catatanSales
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        "tanggalRekap", "namaSales", "namaCust", "noHP", alamat,
+        "penghasilanEstimasi", "produkDiminati", urgensi, status,
+        "skorPrioritas", "catatanAI", "namaFile", "masalahCustomer", "catatanSales"
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      RETURNING id`,
       [
         body.tanggalRekap ?? '',
         body.namaSales ?? '',
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      id: (result as any).insertId,
+      id: rows[0].id,
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error';
@@ -71,9 +72,9 @@ export async function DELETE(request: NextRequest) {
     }
 
     const db = await getDb();
-    const [result] = await db.execute('DELETE FROM prospects WHERE id = ?', [id]);
+    const result = await db.query('DELETE FROM prospects WHERE id = $1', [id]);
 
-    if ((result as any).affectedRows === 0) {
+    if (result.rowCount === 0) {
       return NextResponse.json(
         { success: false, error: 'Prospek tidak ditemukan' },
         { status: 404 }

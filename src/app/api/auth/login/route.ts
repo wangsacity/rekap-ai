@@ -13,12 +13,12 @@ export async function POST(request: NextRequest) {
     }
 
     const db = await getDb();
-    const [rows] = await db.execute(
-      'SELECT id, username, nama, role FROM users WHERE username = ? AND password = ?',
+    const { rows } = await db.query(
+      'SELECT id, username, nama, role FROM users WHERE username = $1 AND password = $2',
       [username, password]
     );
 
-    const users = rows as any[];
+    const users = rows;
     if (users.length === 0) {
       return NextResponse.json(
         { success: false, error: 'Username atau password salah' },

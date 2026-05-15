@@ -5,7 +5,7 @@ import { getDb } from '@/lib/db';
 export async function GET() {
   try {
     const db = await getDb();
-    const [rows] = await db.execute('SELECT id, username, nama, role FROM users ORDER BY id');
+    const { rows } = await db.query('SELECT id, username, nama, role FROM users ORDER BY id');
     return NextResponse.json({ success: true, users: rows });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error';
@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
     }
 
     const db = await getDb();
-    const [existing] = await db.execute('SELECT id FROM users WHERE username = ?', [username]);
-    if ((existing as any[]).length > 0) {
+    const existing = await db.query('SELECT id FROM users WHERE username = $1', [username]);
+    if (existing.rowCount && existing.rowCount > 0) {
       return NextResponse.json(
         { success: false, error: 'Username sudah digunakan' },
         { status: 409 }
@@ -43,8 +43,8 @@ export async function POST(request: NextRequest) {
     }
 
     const id = `user-${Date.now()}`;
-    await db.execute(
-      'INSERT INTO users (id, username, password, nama, role) VALUES (?, ?, ?, ?, ?)',
+    await db.query(
+      'INSERT INTO users (id, username, password, nama, role) VALUES ($1, $2, $3, $4, $5)',
       [id, username, password, nama, role]
     );
 
@@ -79,9 +79,9 @@ export async function DELETE(request: NextRequest) {
     }
 
     const db = await getDb();
-    const [result] = await db.execute('DELETE FROM users WHERE id = ?', [id]);
+    const result = await db.query('DELETE FROM users WHERE id = $1', [id]);
 
-    if ((result as any).affectedRows === 0) {
+    if (result.rowCount === 0) {
       return NextResponse.json(
         { success: false, error: 'User tidak ditemukan' },
         { status: 404 }
